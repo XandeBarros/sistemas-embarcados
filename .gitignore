@@ -6,3 +6,4 @@
 tmuxerror
 vgcore.*
 /.idea/
+.vscode
