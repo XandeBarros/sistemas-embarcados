@@ -38,4 +38,12 @@ echo "Finalizando o contêiner..."
 docker stop "$CONTAINER_ID"
 docker rm "$CONTAINER_ID"
 
+# Copiar Arquivos buildados para a pasta local
+echo "Copiando arquivos buildados..."
+mv $(pwd)/projeto/build-arm32 $(pwd)
+
+# Remover arquivos do Build
+echo "Removendo arquivos do build..."
+rm -rfv projeto
+
 echo "Processo concluído com sucesso!"
