@@ -11,8 +11,12 @@ if (ARM_TARGET)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
     set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
 else()
     message(STATUS "X86_64 INSTEAD OF ARM!")
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE /usr/lib/libarmadillo.so.10)
 endif()
 
 set(CMAKE_CXX_STANDARD 17) # limited to 17 because of the toolchain T.T
@@ -46,7 +50,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     /lely-core/install-x86_64-docker-debian-11/include
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
+
+
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -g3)
 if (ARM_TARGET)
