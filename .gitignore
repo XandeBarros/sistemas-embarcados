@@ -3,6 +3,7 @@
 /cmake-build-debug-x86_64/
 /.crossnote/
 /dockerfile_arm32/lely-core/
+/dockerfile_x86_64//lely-core/
 tmuxerror
 vgcore.*
 /.idea/
