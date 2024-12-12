@@ -2,22 +2,21 @@ FROM debian:11 AS builder
 LABEL authors="grilo"
 
 USER root 
-RUN apt-get -y update \
-  && apt-get -y install \
-  build-essential \
-  pkg-config \
-  cmake \
-  autoconf \
-  automake \
-  libtool \
-  gcc \
-  g++ \
-  gdb \ 
-  libopenblas \
-  liblapack \
-  libarpack2 \
-  libsuperlu \
-  libarmadillo
+RUN apt -y update 
+RUN apt -y install build-essential 
+RUN apt -y install  pkg-config 
+RUN apt -y install  cmake 
+RUN apt -y install  autoconf 
+RUN apt -y install  automake 
+RUN apt -y install  libtool 
+RUN apt -y install  gcc 
+RUN apt -y install  g++ 
+RUN apt -y install  gdb  
+RUN apt -y install  libopenblas 
+RUN apt -y install  liblapack 
+RUN apt -y install  libarpack2 
+RUN apt -y install  libsuperlu 
+RUN apt -y install  libarmadillo
 
 FROM builder AS builder-lely-core
 RUN mkdir /lely-core
