@@ -38,18 +38,16 @@ pkg_check_modules(LELY-COAPP REQUIRED IMPORTED_TARGET liblely-coapp)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 add_executable(${PROJECT_NAME} main.cpp ManoplaLelyBBB.cpp utils/utils.cpp utils/json.h)
 
-#target_include_directories(${PROJECT_NAME} PRIVATE PkgConfig::LELY-IO2)
+include_directories(/usr/local/include /usr/include)
 
 # Diretório da Lely Core que foi buildada dentro do Docker
 target_include_directories(${PROJECT_NAME} PRIVATE
     /lely-core/install-arm-docker-debian-11/include
     /lely-core/install-x86_64-docker-debian-11/include
+    /usr/lib
 )
 
-
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
-
-
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -g3)
