@@ -1,5 +1,5 @@
 FROM debian:11 AS builder
-LABEL authors="grilo"
+LABEL authors="Alexandre Barros, Ana Luiza Mineiro, Arthur Pompeu"
 
 USER root 
 RUN dpkg --add-architecture armhf \

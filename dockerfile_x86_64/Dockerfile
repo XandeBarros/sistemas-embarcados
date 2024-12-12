@@ -1,23 +1,22 @@
 FROM debian:11 AS builder
-LABEL authors="grilo"
+LABEL authors="Alexandre Barros, Ana Luiza Mineiro, Arthur Pompeu"
 
 USER root 
 RUN apt -y update 
-RUN apt -y install build-essential 
-RUN apt -y install  pkg-config 
-RUN apt -y install  cmake 
-RUN apt -y install  autoconf 
-RUN apt -y install  automake 
-RUN apt -y install  libtool 
-RUN apt -y install  gcc 
-RUN apt -y install  g++ 
-RUN apt -y install  gdb  
-RUN apt -y install  libopenblas-base
-RUN apt -y install  liblapack3
-RUN apt -y install  libarpack2
-RUN apt -y install  libsuperlu5
-RUN apt -y install  libarmadillo-dev
-RUN apt -y install  nano
+RUN apt -y install build-essential \
+  pkg-config \
+  cmake \
+  autoconf \
+  automake \
+  libtool \
+  gcc \
+  g++ \
+  gdb \
+  libopenblas-base \
+  liblapack3 \
+  libarpack2 \
+  libsuperlu5 \
+  libarmadillo-dev 
 
 FROM builder AS builder-lely-core
 RUN mkdir /lely-core
