@@ -60,22 +60,31 @@ echo -e "${YELLOW}Clonando o repositório principal...${RESET}"
 git clone https://github.com/XandeBarros/sistemas-embarcados.git "$FOLDER_NAME"
 cd "$FOLDER_NAME"
 
-cd dockerfile
+# Verificar se o usuário pediu para limpar os arquivos temporários
+if [ "$IS_ARM" -eq 1 ]; then
+  echo -e "${GREEN}Acessando a Pasta Docker em '${ARCH_TYPE}' ${RESET}"
+  cd dockerfile_arm32
+else
+  echo -e "${GREEN}Acessando a Pasta Docker em '${ARCH_TYPE}' ${RESET}"
+  cd dockerfile_x86_64
+fi
 
 # Clonar a biblioteca necessária
 echo -e "${YELLOW}Clonando a biblioteca necessária...${RESET}"
 git clone https://github.com/lely-industries/lely-core.git
 
+BUILDER_NAME=$( [ "$IS_ARM" -eq 1 ] && echo "builder-arm32" || echo "builder-x86_64" )
+
 # Construir a imagem Docker
 echo -e "${YELLOW}Construindo a imagem Docker...${RESET}"
-docker build . -t builder 
+docker build . -t "$BUILDER_NAME"
 
 echo -e "${YELLOW}Retornando ao diretório raiz...${RESET}"
 cd ..
 
 # Rodar o contêiner e executar o script interno
 echo -e "${YELLOW}Rodando o contêiner e configurando o ambiente...${RESET}"
-CONTAINER_ID=$(docker run -dit --volume $(pwd):/eesc-aero builder)
+CONTAINER_ID=$(docker run -dit --volume $(pwd):/eesc-aero "$BUILDER_NAME")
 
 # Garantir permissões de execução para o script de build
 echo -e "${YELLOW}Dando permissão de execução ao script build_in_docker.sh dentro do contêiner...${RESET}"
