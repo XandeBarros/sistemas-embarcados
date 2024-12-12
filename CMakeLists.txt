@@ -40,7 +40,11 @@ add_executable(${PROJECT_NAME} main.cpp ManoplaLelyBBB.cpp utils/utils.cpp utils
 
 #target_include_directories(${PROJECT_NAME} PRIVATE PkgConfig::LELY-IO2)
 
-#target_link_directories(${PROJECT_NAME} PRIVATE /home/grilo/Git/lely-core/install-arm-gcc-6.3/lib)
+# Diretório da Lely Core que foi buildada dentro do Docker
+target_include_directories(${PROJECT_NAME} PRIVATE
+    /lely-core/install-arm-docker-debian-11/include
+)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -g3)
