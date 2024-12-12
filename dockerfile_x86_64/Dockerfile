@@ -13,10 +13,10 @@ RUN apt -y install  gcc
 RUN apt -y install  g++ 
 RUN apt -y install  gdb  
 RUN apt -y install  libopenblas-base
-RUN apt -y install  liblapack 
-RUN apt -y install  libarpack2 
-RUN apt -y install  libsuperlu 
-RUN apt -y install  libarmadillo
+RUN apt -y install  liblapack3
+RUN apt -y install  libarpack2t64
+RUN apt -y install  libsuperlu6
+RUN apt -y install  libarmadillo14
 
 FROM builder AS builder-lely-core
 RUN mkdir /lely-core
