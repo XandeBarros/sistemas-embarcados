@@ -5,6 +5,7 @@ set -e
 
 echo "Entrando no diretório do projeto..."
 echo "Criando diretório de build para ARM32..."
+cd /workspace/eesc-aero
 mkdir build-arm32
 cd build-arm32
 
