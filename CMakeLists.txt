@@ -43,6 +43,7 @@ add_executable(${PROJECT_NAME} main.cpp ManoplaLelyBBB.cpp utils/utils.cpp utils
 # Diretório da Lely Core que foi buildada dentro do Docker
 target_include_directories(${PROJECT_NAME} PRIVATE
     /lely-core/install-arm-docker-debian-11/include
+    /lely-core/install-x86_64-docker-debian-11/include
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
