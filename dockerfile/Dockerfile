@@ -1,34 +1,36 @@
 FROM debian:11 AS builder
 LABEL authors="grilo"
 
+USER root 
 RUN dpkg --add-architecture armhf \
-    && apt-get -y update \
-    && apt-get -y install \
-      build-essential \
-      pkg-config \
-      cmake \
-      autoconf \
-      automake \
-      libtool \
-      gcc-arm-linux-gnueabihf \
-      g++-arm-linux-gnueabihf \
-      gdb \
-      libopenblas-dev:armhf \
-      libopenblas-dev:armhf \
-      liblapack-dev:armhf \
-      libarpack2-dev:armhf \
-      libsuperlu-dev:armhf \
-      libarmadillo-dev:armhf
+  && apt-get -y update \
+  && apt-get -y install \
+  build-essential \
+  pkg-config \
+  cmake \
+  autoconf \
+  automake \
+  libtool \
+  gcc-arm-linux-gnueabihf \
+  g++-arm-linux-gnueabihf \
+  gdb \ 
+  libopenblas-dev:armhf \
+  liblapack-dev:armhf \
+  libarpack2-dev:armhf \
+  libsuperlu-dev:armhf \
+  libarmadillo-dev:armhf
 
 FROM builder AS builder-lely-core
-RUN mkdir /lely-core && touch /lely-core/xablau
+RUN mkdir /lely-core
 COPY lely-core/ /lely-core
 RUN mkdir /lely-core/build-arm-docker-debian-11
 RUN mkdir /lely-core/install-arm-docker-debian-11
-WORKDIR /lely-core/build-arm-docker-debian-11
-RUN cd .. autoreconf -i && cd /lely-core/build-arm-docker-debian-11 && ../configure --host=arm-linux-gnueabihf --disable-python --disable-tests --prefix=/lely-core/install-arm-docker-debian-11 \
-    && make -j20 \
-    && make install
+WORKDIR /lely-core
+RUN autoreconf -i
+RUN ./configure --host=arm-linux-gnueabihf --disable-python --disable-tests --prefix=/lely-core/install-arm-docker-debian-11
+RUN make -j8 
+# -jT -> Onde T é a quantidade de Threads disponíveis no processador -> utilize o máximo para realizar o processo mais rápido
+RUN make install
 
 FROM builder AS builder-manopla
 RUN mkdir -p /lely-core/install-arm-docker-debian-11
