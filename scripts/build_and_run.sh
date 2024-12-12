@@ -1,12 +1,49 @@
 #!/bin/bash
 
+# Valores padrão
+FOLDER_NAME="projeto"  # Nome padrão da pasta
+CLEAN_INSTALL=1        # Limpeza ativada por padrão
+
+# Função para exibir ajuda
+show_help() {
+  echo "Uso: build_and_run.sh [--folder-name=NOME_DA_PASTA] [--clean-install=0|1]"
+  echo ""
+  echo "Opções:"
+  echo "  --folder-name=NOME_DA_PASTA   Define o nome da pasta onde o repositório será clonado. Padrão: 'projeto'."
+  echo "  --clean-install=0|1           Define se os arquivos temporários serão excluídos (1) ou não (0). Padrão: 1."
+  exit 1
+}
+
+# Parsear argumentos
+for ARG in "$@"; do
+  case $ARG in
+    --folder-name=*)
+      FOLDER_NAME="${ARG#*=}"
+      ;;
+    --clean-install=*)
+      CLEAN_INSTALL="${ARG#*=}"
+      ;;
+    --help|-h)
+      show_help
+      ;;
+    *)
+      echo "Opção desconhecida: $ARG"
+      show_help
+      ;;
+  esac
+done
+
+# Parâmetros definidos
+echo "Nome da pasta: $FOLDER_NAME"
+echo "Clean install: $CLEAN_INSTALL"
+
 # Parar o script em caso de erro
 set -e
 
 # Clonar o repositório principal
 echo "Clonando o repositório principal..."
-git clone https://github.com/XandeBarros/sistemas-embarcados.git projeto
-cd projeto
+git clone https://github.com/XandeBarros/sistemas-embarcados.git "$FOLDER_NAME"
+cd "$FOLDER_NAME"
 
 cd dockerfile
 
@@ -37,13 +74,18 @@ docker exec "$CONTAINER_ID" /eesc-aero/scripts/build_in_docker.sh
 echo "Finalizando o contêiner..."
 docker stop "$CONTAINER_ID"
 docker rm "$CONTAINER_ID"
+cd ..
 
 # Copiar Arquivos buildados para a pasta local
 echo "Copiando arquivos buildados..."
-mv $(pwd)/projeto/build-arm32 $(pwd)
+mv $(pwd)/"$FOLDER_NAME"/build-arm32 $(pwd)
 
-# Remover arquivos do Build
-echo "Removendo arquivos do build..."
-rm -rfv projeto
+# Verificar se o usuário pediu para limpar os arquivos temporários
+if [ "$CLEAN_INSTALL" -eq 1 ]; then
+  echo "Removendo arquivos do build..."
+  rm -rfv "$FOLDER_NAME"
+else
+  echo "Arquivos temporários mantidos em '$FOLDER_NAME'."
+fi
 
 echo "Processo concluído com sucesso!"
