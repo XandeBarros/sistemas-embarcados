@@ -47,7 +47,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     /usr/lib
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas /usr/lib/libarmadillo.so.10.1.2)
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -g3)
