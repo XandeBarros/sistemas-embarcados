@@ -14,7 +14,7 @@ RUN apt -y install  g++
 RUN apt -y install  gdb  
 RUN apt -y install  libopenblas-base
 RUN apt -y install  liblapack3
-RUN apt -y install  libarpack2t64
+RUN apt -y install  libarpack2
 RUN apt -y install  libsuperlu6
 RUN apt -y install  libarmadillo14
 
