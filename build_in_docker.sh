@@ -5,7 +5,7 @@ set -e
 
 echo "Entrando no diretório do projeto..."
 echo "Criando diretório de build para ARM32..."
-mkdir -p build-arm32
+mkdir build-arm32
 cd build-arm32
 
 echo "Executando CMake com o ARM_TARGET..."
