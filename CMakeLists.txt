@@ -46,11 +46,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     /lely-core/install-x86_64-docker-debian-11/include
 )
 
-if (ARM_TARGET) 
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE /usr/lib/libarmadillo.so.10)
-endif()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
+
 
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
