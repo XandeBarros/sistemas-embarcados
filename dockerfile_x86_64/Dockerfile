@@ -12,7 +12,7 @@ RUN apt -y install  libtool
 RUN apt -y install  gcc 
 RUN apt -y install  g++ 
 RUN apt -y install  gdb  
-RUN apt -y install  libopenblas 
+RUN apt -y install  libopenblas-base
 RUN apt -y install  liblapack 
 RUN apt -y install  libarpack2 
 RUN apt -y install  libsuperlu 
