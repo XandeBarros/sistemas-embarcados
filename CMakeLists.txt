@@ -16,8 +16,8 @@ elseif(ARCH_TARGET STREQUAL "riscv64")
 
     set(CMAKE_SYSTEM_PROCESSOR riscv64)
 
-    set(CMAKE_C_COMPILER gcc-riscv64-linux-gnu) 
-    set(CMAKE_CXX_COMPILER g++-riscv64-linux-gnu)
+    set(CMAKE_C_COMPILER /usr/bin/gcc-riscv64-linux-gnu) 
+    set(CMAKE_CXX_COMPILER /usr/bin/g++-riscv64-linux-gnu)
 
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
