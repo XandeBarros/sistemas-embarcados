@@ -56,26 +56,27 @@ pkg_check_modules(LELY-COAPP REQUIRED IMPORTED_TARGET liblely-coapp)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 add_executable(${PROJECT_NAME} main.cpp ManoplaLelyBBB.cpp utils/utils.cpp utils/json.h)
 
-if (ARCH_TARGET STREQUAL "arm32")
-    target_include_directories(${PROJECT_NAME} PRIVATE 
-        /lely-core/install-arm-docker-debian-11/include
-    )
-elseif (ARCH_TARGET STREQUAL "riscv64")
-    target_include_directories(${PROJECT_NAME} PRIVATE 
-        /lely-core/install-riscv64-docker-debian-11/include
-    )
-else()
-    target_include_directories(${PROJECT_NAME} PRIVATE 
-        /lely-core/install-x86_64-docker-debian-11/include
-    )
-endif()
-
 # Diretório da Lely Core que foi buildada dentro do Docker
 target_include_directories(${PROJECT_NAME} PRIVATE
     /usr/lib
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas /usr/lib/libarmadillo.so.10.1.2)
+if (ARCH_TARGET STREQUAL "arm32")
+    target_include_directories(${PROJECT_NAME} PRIVATE 
+        /lely-core/install-arm-docker-debian-11/include
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas armadillo)
+elseif (ARCH_TARGET STREQUAL "riscv64")
+    target_include_directories(${PROJECT_NAME} PRIVATE 
+        /lely-core/install-riscv64-docker-debian-11/include
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas /usr/lib/libarmadillo.so.14.2.1)
+else()
+    target_include_directories(${PROJECT_NAME} PRIVATE 
+        /lely-core/install-x86_64-docker-debian-11/include
+    )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas /usr/lib/libarmadillo.so.10.1.2)
+endif()
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -g3)
