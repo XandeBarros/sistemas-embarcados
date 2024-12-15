@@ -9,17 +9,20 @@ RESET="\033[0m"
 
 # Função para exibir ajuda
 show_help() {
-  echo -e "${YELLOW}Uso: build_in_docker.sh [--arm-target=0|1]${RESET}"
+  echo -e "${YELLOW}Uso: build_in_docker.sh [--arch-target=x86_64|arm32|riscv64]${RESET}"
   echo -e "\nOpções:"
-  echo -e "  ${BLUE}--arm-target=0|1${RESET}              Escolhe arquitetura do Build (1) ARM32 ou (0) X86_64. Padrão: 1 ARM32"
+  echo -e "  ${BLUE}--arch-target=x86_64|arm32|riscv64${RESET}  Escolhe arquitetura do Build. Padrão: arm32"
   exit 1
 }
+
+# Valores padrão
+ARCH_TARGET="arm32"
 
 # Parsear argumentos
 for ARG in "$@"; do
   case $ARG in
-    --arm-target=*)
-      IS_ARM="${ARG#*=}"
+    --arch-target=*)
+      ARCH_TARGET="${ARG#*=}"
       ;;
     --help|-h)
       show_help
@@ -34,26 +37,35 @@ done
 # Parar o script em caso de erro
 set -e
 
-# Determinar o tipo de arquitetura
-ARCH_TYPE=$( [ "$IS_ARM" -eq 1 ] && echo "ARM32" || echo "X86_64" )
-BUILD_FOLDER=$( [ "$IS_ARM" -eq 1 ] && echo "build-arm32" || echo "build-x86_64" )
+# Validar a arquitetura
+case $ARCH_TARGET in
+  "x86_64"|"arm32"|"riscv64")
+    ;;
+  *)
+    echo -e "${RED}Arquitetura inválida: ${ARCH_TARGET}${RESET}"
+    show_help
+    ;;
+esac
+
+# Determinar diretório de build
+BUILD_FOLDER="build-${ARCH_TARGET}"
 
 # Entrar no diretório do projeto
 echo -e "${BLUE}Entrando no diretório do projeto...${RESET}"
 cd /eesc-aero
 
 # Criar diretório de build
-echo -e "${YELLOW}Criando diretório de build para ${ARCH_TYPE}...${RESET}"
+echo -e "${YELLOW}Criando diretório de build para ${ARCH_TARGET}...${RESET}"
 mkdir "$BUILD_FOLDER"
 cd "$BUILD_FOLDER"
 
 # Executar CMake
-echo -e "${GREEN}Executando CMake para ${ARCH_TYPE}...${RESET}"
-cmake -DARM_TARGET=$IS_ARM ..
+echo -e "${GREEN}Executando CMake para ${ARCH_TARGET}...${RESET}"
+cmake -DARCH_TARGET="$ARCH_TARGET" ..
 
 # Construir com make
 echo -e "${GREEN}Construindo o programa com make...${RESET}"
 make
 
 # Build concluído
-echo -e "${GREEN}Build concluído com sucesso!${RESET}"
+echo -e "${GREEN}Build concluído com sucesso para ${ARCH_TARGET}!${RESET}"

@@ -3,7 +3,7 @@
 # Valores padrão
 FOLDER_NAME="projeto"  # Nome padrão da pasta
 CLEAN_INSTALL=1        # Limpeza ativada por padrão
-IS_ARM=1               # Seleciona ARM32 como padrão
+ARCH_TARGET="arm32"   # Arquitetura padrão: ARM32
 
 # Códigos de cores ANSI
 BLUE="\033[1;34m"
@@ -14,12 +14,12 @@ RESET="\033[0m"
 
 # Função para exibir ajuda
 show_help() {
-  echo -e "${YELLOW}Uso: build_and_run.sh [--folder-name=NOME_DA_PASTA] [--clean-install=0|1] [--arm-target=0|1]${RESET}"
+  echo -e "${YELLOW}Uso: build_and_run.sh [--folder-name=NOME_DA_PASTA] [--clean-install=0|1] [--arch-target=x86_64|arm32|riscv64]${RESET}"
   echo ""
   echo -e "${BLUE}Opções:${RESET}"
   echo -e "${GREEN}  --folder-name=NOME_DA_PASTA   ${RESET}Define o nome da pasta onde o repositório será clonado. Padrão: 'projeto'."
   echo -e "${GREEN}  --clean-install=0|1           ${RESET}Define se os arquivos temporários serão excluídos (1) ou não (0). Padrão: 1."
-  echo -e "${GREEN}  --arm-target=0|1              ${RESET}Escolhe arquitetura do Build (1 para ARM32 ou 0 para X86_64). Padrão: 1 (ARM32)."
+  echo -e "${GREEN}  --arch-target=x86_64|arm32|riscv64 ${RESET}Escolhe arquitetura do Build. Padrão: 'arm32'."
   exit 1
 }
 
@@ -32,8 +32,8 @@ for ARG in "$@"; do
     --clean-install=*)
       CLEAN_INSTALL="${ARG#*=}"
       ;;
-    --arm-target=*)
-      IS_ARM="${ARG#*=}"
+    --arch-target=*)
+      ARCH_TARGET="${ARG#*=}"
       ;;
     --help|-h)
       show_help
@@ -45,12 +45,17 @@ for ARG in "$@"; do
   esac
 done
 
+# Validar o valor de ARCH_TARGET
+if [[ "$ARCH_TARGET" != "x86_64" && "$ARCH_TARGET" != "arm32" && "$ARCH_TARGET" != "riscv64" ]]; then
+  echo -e "${RED}Erro: Valor inválido para --arch-target. Use 'x86_64', 'arm32' ou 'riscv64'.${RESET}"
+  exit 1
+fi
+
 # Parâmetros definidos
 echo -e "${BLUE}Nome da pasta:${RESET} $FOLDER_NAME"
 INSTALL_TYPE=$( [ "$CLEAN_INSTALL" -eq 1 ] && echo "True" || echo "False" )
 echo -e "${BLUE}Clean install:${RESET} $INSTALL_TYPE"
-ARCH_TYPE=$( [ "$IS_ARM" -eq 1 ] && echo "ARM32" || echo "X86_64" )
-echo -e "${BLUE}Arquitetura selecionada:${RESET} $ARCH_TYPE"
+echo -e "${BLUE}Arquitetura selecionada:${RESET} $ARCH_TARGET"
 
 # Parar o script em caso de erro
 set -e
@@ -60,20 +65,27 @@ echo -e "${YELLOW}Clonando o repositório principal...${RESET}"
 git clone https://github.com/XandeBarros/sistemas-embarcados.git "$FOLDER_NAME"
 cd "$FOLDER_NAME"
 
-# Verificar se o usuário pediu para limpar os arquivos temporários
-if [ "$IS_ARM" -eq 1 ]; then
-  echo -e "${GREEN}Acessando a Pasta Docker em '${ARCH_TYPE}' ${RESET}"
-  cd dockerfile_arm32
-else
-  echo -e "${GREEN}Acessando a Pasta Docker em '${ARCH_TYPE}' ${RESET}"
-  cd dockerfile_x86_64
-fi
+# Acessar a pasta correta com base na arquitetura escolhida
+case "$ARCH_TARGET" in
+  arm32)
+    echo -e "${GREEN}Acessando a Pasta Docker em 'ARM32'${RESET}"
+    cd dockerfile_arm32
+    ;;
+  x86_64)
+    echo -e "${GREEN}Acessando a Pasta Docker em 'X86_64'${RESET}"
+    cd dockerfile_x86_64
+    ;;
+  riscv64)
+    echo -e "${GREEN}Acessando a Pasta Docker em 'RISC-V64'${RESET}"
+    cd dockerfile_riscv64
+    ;;
+esac
 
 # Clonar a biblioteca necessária
 echo -e "${YELLOW}Clonando a biblioteca necessária...${RESET}"
 git clone https://github.com/lely-industries/lely-core.git
 
-BUILDER_NAME=$( [ "$IS_ARM" -eq 1 ] && echo "builder-arm32" || echo "builder-x86_64" )
+BUILDER_NAME="builder-$ARCH_TARGET"
 
 # Construir a imagem Docker
 echo -e "${YELLOW}Construindo a imagem Docker...${RESET}"
@@ -91,8 +103,8 @@ echo -e "${YELLOW}Dando permissão de execução ao script build_in_docker.sh de
 docker exec "$CONTAINER_ID" chmod +x /eesc-aero/scripts/build_in_docker.sh
 
 # Executar o script de build dentro do contêiner com a arquitetura selecionada
-echo -e "${YELLOW}Executando o script de build dentro do contêiner para a arquitetura ${BLUE}$ARCH_TYPE${YELLOW}...${RESET}"
-docker exec "$CONTAINER_ID" /eesc-aero/scripts/build_in_docker.sh --arm-target="$IS_ARM"
+echo -e "${YELLOW}Executando o script de build dentro do contêiner para a arquitetura ${BLUE}$ARCH_TARGET${YELLOW}...${RESET}"
+docker exec "$CONTAINER_ID" /eesc-aero/scripts/build_in_docker.sh --arch-target="$ARCH_TARGET"
 
 # Finalizar e remover o contêiner após o processo
 echo -e "${YELLOW}Finalizando o contêiner...${RESET}"
@@ -101,7 +113,7 @@ docker rm "$CONTAINER_ID"
 cd ..
 
 # Copiar arquivos buildados para a pasta local
-BUILD_FOLDER=$( [ "$IS_ARM" -eq 1 ] && echo "build-arm32" || echo "build-x86_64" )
+BUILD_FOLDER="build-$ARCH_TARGET"
 echo -e "${YELLOW}Copiando arquivos buildados ($BUILD_FOLDER)...${RESET}"
 mv $(pwd)/"$FOLDER_NAME"/"$BUILD_FOLDER" $(pwd)
 
