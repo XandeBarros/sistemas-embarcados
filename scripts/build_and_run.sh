@@ -85,6 +85,18 @@ esac
 echo -e "${YELLOW}Clonando a biblioteca necessária...${RESET}"
 git clone https://github.com/lely-industries/lely-core.git
 
+if ["$ARCH_TARGET" == riscv64]; then
+  # Caminhos dos arquivos
+  SOURCE_FILE="dockerfile_riscv64/mkjmp.c"
+  DESTINATION_FILE="dockerfile_riscv64/lely-core/src/util/mkjmp.c"
+  
+  echo -e "${GREEN}Substituindo $DESTINATION_FILE com $SOURCE_FILE...${RESET}"
+  cp "$SOURCE_FILE" "$DESTINATION_FILE"    
+
+  cd dockerfile_riscv64
+  ;;
+fi
+
 BUILDER_NAME="builder-$ARCH_TARGET"
 
 # Construir a imagem Docker
