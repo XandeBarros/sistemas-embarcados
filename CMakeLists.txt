@@ -79,7 +79,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBRARIES} blas /usr/
 
 target_link_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_LIBDIR})
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -g3)
-if (ARCH_TARGET == "arm32")
+if (ARCH_TARGET STREQUAL "arm32")
     target_include_directories(${PROJECT_NAME} PRIVATE ${LELY-COAPP_INCLUDEDIR})
     #target_include_directories(${PROJECT_NAME} PRIVATE ${BBB_DEBIAN_11_SYSROOT}/usr/include)
 endif ()
