@@ -85,17 +85,24 @@ esac
 echo -e "${YELLOW}Clonando a biblioteca necessária...${RESET}"
 git clone https://github.com/lely-industries/lely-core.git
 
-if ["$ARCH_TARGET" == riscv64]; then
-  # Caminhos dos arquivos
-  SOURCE_FILE="dockerfile_riscv64/mkjmp.c"
-  DESTINATION_FILE="dockerfile_riscv64/lely-core/src/util/mkjmp.c"
-  
-  echo -e "${GREEN}Substituindo $DESTINATION_FILE com $SOURCE_FILE...${RESET}"
-  cp "$SOURCE_FILE" "$DESTINATION_FILE"    
-
-  cd dockerfile_riscv64
-  ;;
-fi
+# Repositório Clonado!
+case "$ARCH_TARGET" in
+  arm32)
+    echo -e "${GREEN}Lely Core clonada para Dockerfile_ARM32${RESET}"
+    ;;
+  x86_64)
+    echo -e "${GREEN}Lely Core clonada para Dockerfile_X86_64${RESET}"
+    ;;
+  riscv64)
+    echo -e "${GREEN}Lely Core clonada para Dockerfile_RISC-V64${RESET}"
+    ls
+    SOURCE_FILE="./mkjmp.c"
+    DESTINATION_FILE="./lely-core/src/util/mkjmp.c"
+    
+    echo -e "${GREEN}Substituindo $DESTINATION_FILE com $SOURCE_FILE...${RESET}"
+    cp "$SOURCE_FILE" "$DESTINATION_FILE"  
+    ;;
+esac
 
 BUILDER_NAME="builder-$ARCH_TARGET"
 

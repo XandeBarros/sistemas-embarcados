@@ -4,7 +4,7 @@
  *
  * @see lely/util/mkjmp.h
  *
- * @copyright 2018-2019 Lely Industries N.V.
+ * @copyright 2018-2024 Lely Industries N.V.
  *
  * @author J. S. Seldenthuis <jseldenthuis@lely.com>
  *
@@ -44,10 +44,10 @@
 #elif defined(__x86_64__)
 #define MKJMP_SET_SP(sp, size) \
   __asm__("movq    %0, %%rsp" ::"r"((char *)(sp) + (size)))
-#endif
 #elif defined(__riscv)
 #define MKJMP_SET_SP(sp, size) \
   __asm__("move sp, %0" ::"r"((char *)(sp) + (size)))
+#endif
 #elif defined(_MSC_VER)
 #if defined(_M_AMD64)
 #define MKJMP_SET_SP(sp, size)       \
@@ -192,7 +192,8 @@ sigctx_func(void)
   void (*func)(void *) = sigctx.func;
   void *arg = sigctx.arg;
 
-  // Save the current environment, on succes, and jump back to sigmkjmp().
+  // Save the current environment, on success, and jump back to
+  // sigmkjmp().
   if (!sigsetjmp(sigctx.penv, sigctx.savemask))
     siglongjmp(sigctx.env, 1);
 
